@@ -1,0 +1,560 @@
+{
+  "basePath": "/_ah/api",
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "ModelsEmployeeInputForm": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "employeeWebSafeKey": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsGradeForm": {
+      "properties": {
+        "gradeName": {
+          "type": "string"
+        },
+        "gradeWebSafeKey": {
+          "type": "string"
+        },
+        "orgSpecificName": {
+          "type": "string"
+        },
+        "sections": {
+          "description": "ConferenceFormmm -- Conference outbound form message",
+          "items": {
+            "$ref": "#/definitions/ModelsSectionForm"
+          },
+          "type": "array"
+        },
+        "subjects": {
+          "description": "SubjectForm -- Conference outbound form message",
+          "items": {
+            "$ref": "#/definitions/ModelsSubjectForm"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsGradeInputForm": {
+      "properties": {
+        "delete": {
+          "type": "boolean"
+        },
+        "gradeWebSafeKey": {
+          "type": "string"
+        },
+        "name": {
+          "enum": [
+            "PreNursery",
+            "Nursery",
+            "JuniorKG",
+            "SeniorKG",
+            "First",
+            "Second",
+            "Third",
+            "Fourth",
+            "Fifth",
+            "Sixth",
+            "Seventh",
+            "Eigth",
+            "Nine",
+            "Ten",
+            "Eleven",
+            "Twelth"
+          ],
+          "type": "string"
+        },
+        "orgSpecificName": {
+          "type": "string"
+        },
+        "subjectWebSafeKey": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsGradeOutputForm": {
+      "properties": {
+        "grades": {
+          "description": "GradeForm outbound form message",
+          "items": {
+            "$ref": "#/definitions/ModelsGradeForm"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsOrganizationForm": {
+      "properties": {
+        "orgName": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsRegisteredUsersInputForm": {
+      "properties": {
+        "employeeKey": {
+          "type": "string"
+        },
+        "isEmployee": {
+          "type": "boolean"
+        },
+        "isStudent": {
+          "type": "boolean"
+        },
+        "orgKey": {
+          "type": "string"
+        },
+        "studentKey": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsRegisteredUsersOutputForm": {
+      "properties": {
+        "isAdmin": {
+          "type": "boolean"
+        },
+        "isPrincipal": {
+          "type": "boolean"
+        },
+        "isStudent": {
+          "type": "boolean"
+        },
+        "isTeacher": {
+          "type": "boolean"
+        },
+        "isUser": {
+          "default": true,
+          "type": "boolean"
+        },
+        "mainEmail": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsSectionForm": {
+      "properties": {
+        "delete": {
+          "type": "boolean"
+        },
+        "gradeWebSafeKey": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sectionWebSafeKey": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsStudentForm": {
+      "properties": {
+        "gradeWebSafeKey": {
+          "type": "string"
+        },
+        "sectionWebSafeKey": {
+          "type": "string"
+        },
+        "studentAge": {
+          "type": "string"
+        },
+        "studentFees": {
+          "type": "string"
+        },
+        "studentName": {
+          "type": "string"
+        },
+        "studentWebSafeKey": {
+          "type": "string"
+        },
+        "subjectWebSafeKey": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsStudentOutputForm": {
+      "properties": {
+        "gradeWebSafeKey": {
+          "type": "string"
+        },
+        "isApproved": {
+          "type": "boolean"
+        },
+        "sectionWebSafeKey": {
+          "type": "string"
+        },
+        "studentAge": {
+          "type": "string"
+        },
+        "studentFees": {
+          "type": "string"
+        },
+        "studentName": {
+          "type": "string"
+        },
+        "studentRollNumber": {
+          "format": "int64",
+          "type": "string"
+        },
+        "studentWebSafeKey": {
+          "type": "string"
+        },
+        "subjectWebSafeKey": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsStudentOutputForm1": {
+      "properties": {
+        "grade": {
+          "$ref": "#/definitions/ModelsGradeForm",
+          "description": "GradeForm outbound form message"
+        },
+        "isApproved": {
+          "type": "boolean"
+        },
+        "section": {
+          "$ref": "#/definitions/ModelsSectionForm",
+          "description": "ConferenceFormmm -- Conference outbound form message"
+        },
+        "studentAge": {
+          "type": "string"
+        },
+        "studentFees": {
+          "type": "string"
+        },
+        "studentName": {
+          "type": "string"
+        },
+        "studentRollNumber": {
+          "format": "int64",
+          "type": "string"
+        },
+        "studentWebSafeKey": {
+          "type": "string"
+        },
+        "subjects": {
+          "description": "SubjectForm -- Conference outbound form message",
+          "items": {
+            "$ref": "#/definitions/ModelsSubjectForm"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsStudentsOutputForm": {
+      "properties": {
+        "students": {
+          "description": "StudentOutputForm -- User profile object",
+          "items": {
+            "$ref": "#/definitions/ModelsStudentOutputForm"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ModelsSubjectForm": {
+      "properties": {
+        "book": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "delete": {
+          "default": true,
+          "type": "boolean"
+        },
+        "gradeWebSafeKey": {
+          "type": "string"
+        },
+        "mandatory": {
+          "default": true,
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "subjectWebSafeKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "name"
+      ],
+      "type": "object"
+    },
+    "ProtorpcMessagesCombinedContainer": {
+      "properties": {
+        "websafeKey": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "host": "schoolmanagement-api.endpoints.school-146605.cloud.goog",
+  "info": {
+    "title": "schoolmanagement",
+    "version": "v1"
+  },
+  "paths": {
+    "/schoolmanagement/v1/configureUser": {
+      "post": {
+        "operationId": "SchoolManagementAPI_configureUser",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ModelsRegisteredUsersInputForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "$ref": "#/definitions/ModelsRegisteredUsersOutputForm"
+            }
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/getGrades": {
+      "post": {
+        "operationId": "SchoolManagementAPI_getGrades",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "$ref": "#/definitions/ModelsGradeOutputForm"
+            }
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/getStudent": {
+      "post": {
+        "operationId": "SchoolManagementAPI_getStudent",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ProtorpcMessagesCombinedContainer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "$ref": "#/definitions/ModelsStudentOutputForm1"
+            }
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/getStudents": {
+      "post": {
+        "operationId": "SchoolManagementAPI_getStudents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "$ref": "#/definitions/ModelsStudentsOutputForm"
+            }
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/getUser": {
+      "post": {
+        "operationId": "SchoolManagementAPI_getUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "A successful response",
+            "schema": {
+              "$ref": "#/definitions/ModelsRegisteredUsersOutputForm"
+            }
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/registerEmployee": {
+      "post": {
+        "operationId": "SchoolManagementAPI_registerEmployee",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ModelsEmployeeInputForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response"
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/registerGrade": {
+      "post": {
+        "operationId": "SchoolManagementAPI_registerGrade",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ModelsGradeInputForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response"
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/registerOrganization": {
+      "post": {
+        "operationId": "SchoolManagementAPI_registerOrganization",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ModelsOrganizationForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response"
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/registerSection": {
+      "post": {
+        "operationId": "SchoolManagementAPI_registerSection",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ModelsSectionForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response"
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/registerStudent": {
+      "post": {
+        "operationId": "SchoolManagementAPI_registerStudent",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ModelsStudentForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response"
+          }
+        }
+      }
+    },
+    "/schoolmanagement/v1/registerSubject": {
+      "post": {
+        "operationId": "SchoolManagementAPI_registerSubject",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ModelsSubjectForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response"
+          }
+        }
+      }
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "google_id_token": {
+      "authorizationUrl": "",
+      "flow": "implicit",
+      "type": "oauth2",
+      "x-google-issuer": "accounts.google.com",
+      "x-google-jwks_uri": "https://www.googleapis.com/oauth2/v1/certs"
+    }
+  },
+  "swagger": "2.0"
+}
