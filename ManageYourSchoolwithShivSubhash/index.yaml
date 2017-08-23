@@ -29,3 +29,8 @@ indexes:
   properties:
   - name: employeeKey
   - name: tokenNumber
+
+- kind: Token
+  properties:
+  - name: studentKey
+  - name: tokenNumber

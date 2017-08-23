@@ -1,3 +1,7 @@
+import logging
+
+from google.appengine.api import search
+from google.appengine.ext import deferred
 from google.appengine.ext import ndb
 from protorpc import messages
 
@@ -21,7 +25,24 @@ class Student(ndb.Model):
     sectionKey = ndb.KeyProperty(kind="Section")
     subjectKey = ndb.KeyProperty(kind="Subject", repeated=True)
     isApproved = ndb.BooleanProperty(default=False)
-    attendencePercentage = ndb.StringProperty()
+    attendencePercentage = ndb.FloatProperty(default=0.0)
+    def _post_put_hook(self, future):
+        document = search.Document(
+                doc_id=self.studentName,
+                fields=[
+                   search.TextField(name='username', value=self.studentName),
+                   search.TextField(name='studentAge', value=self.studentAge),
+                   ])
+        try:
+            index = search.Index(name="StudentIndex")
+            index.put(document)
+        except search.Error:
+                logging.exception('Put failed')
+
+class GlobalOrganization(ndb.Model):
+    orgKey = ndb.KeyProperty(kind="Organization")
+    organizationNamespace = ndb.IntegerProperty()
+
     
 class Organization(ndb.Model):
     """Organization"""
@@ -31,8 +52,10 @@ class Organization(ndb.Model):
     userID = ndb.StringProperty()
     studentCount = ndb.IntegerProperty(default=0) 
     employeeCount = ndb.IntegerProperty(default=0)
-    uniqueOrganizationName = ndb.StringProperty()
-    
+    uniqueOrganizationName = ndb.IntegerProperty()
+       
+   
+
 class RegisteredUsers(ndb.Model):
     """RegisteredUsers -- User profile object"""
     userName = ndb.StringProperty()
@@ -94,7 +117,6 @@ class StudentsOutputForm1(messages.Message):
 
 
     
-    
 class OrganizationForm(messages.Message):
     """OrganizationForm -- Organization outbound form message"""
     orgName = messages.StringField(1)
@@ -114,7 +136,7 @@ class RegisteredUsersOutputForm(messages.Message):
     isPrincipal = messages.BooleanField(4, default=False)
     isAdmin = messages.BooleanField(5, default=False)
     isStudent = messages.BooleanField(6, default=False)
-    isUser = messages.BooleanField(7, default=True)
+    isActive = messages.BooleanField(7, default=True)
 
 class RegisteredUsersInputForm(messages.Message):
     userName = messages.StringField(1)
@@ -158,3 +180,11 @@ class Section(ndb.Model):
     """Section -- Conference object"""
     name = ndb.StringProperty(required=True)
     nameUpper = ndb.StringProperty(required=True)
+
+class StudentAttendence(ndb.Model):
+    studentKey = ndb.KeyProperty()
+    date = ndb.DateProperty()
+    isPresent = ndb.BooleanProperty(default=True)
+    employeeKey = ndb.KeyProperty()
+    when = ndb.DateTimeProperty(auto_now=True)
+    

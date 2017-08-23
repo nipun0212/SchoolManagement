@@ -1,5 +1,7 @@
 from google.appengine.ext import ndb
+from protorpc import message_types
 from protorpc import messages
+
 import models
 
 
@@ -55,8 +57,29 @@ class registerStudent_InputForm(messages.Message):
     studentWebSafeKey = messages.StringField(7)
 
 class approveUser_InputForm(messages.Message):
-    registeredUserKey = messages.StringField(1)
-    tokenNumber = messages.IntegerField(2)
+    empId = messages.StringField(1)
+    studentId = messages.StringField(2)
+    tokenNumber = messages.IntegerField(3)
+
+class giveRolesToUser_InputForm(messages.Message):
+    registeredUserKey = messages.StringField(1, required=True)
+    isAdmin = messages.BooleanField(2)
+    isTeacher = messages.BooleanField(3)
+    isStudent = messages.BooleanField(4)
+    isPrincipal = messages.BooleanField(5)
+
+
+class giveAttendenceToStudent_InputForm(messages.Message):
+    studentWebSafeKey = messages.StringField(1, required=True)
+    date = messages.StringField(2)
+    isPresent = messages.BooleanField(3)
+
+
+
+class SelfRegistration_InputForm(messages.Message):
+    orgKey = messages.StringField(1)
+    empKey = messages.StringField(2)
+    studentKey = messages.StringField(3)
     
 class GradeList(messages.Enum):
     """GradeList enumeration value"""

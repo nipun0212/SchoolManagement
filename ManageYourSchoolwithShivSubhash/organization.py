@@ -28,6 +28,17 @@ API_EXPLORER_CLIENT_ID = endpoints.API_EXPLORER_CLIENT_ID
                 scopes=[EMAIL_SCOPE])
 class SchoolManagementAPI(remote.Service):
     
+    def _create_document(self,):
+        document = search.Document(
+        # Setting the doc_id is optional. If omitted, the search service will
+        # create an identifier.
+        doc_id='Students',
+        fields=[
+            search.TextField(name='studentName'),
+            search.TextField(name='studentAge')
+        ])
+        return document
+    
     def _getNamespace(self, registeredUser):
         uniqueOrganizationName = Organization.query(registeredUser.orgKey == Organization.key).fetch(projection=[Organization.uniqueOrganizationName])
         
@@ -58,14 +69,17 @@ class SchoolManagementAPI(remote.Service):
         return sectionFormList
 
     @ndb.transactional(xg=True)
-    def _saveOrganization(self, organization, registeredUser, user_id):
+    def _saveOrganization(self, organization, registeredUser, globalOrganization, user_id):
         organizationKey = organization.put()
         
         registeredUser.isOwner = True
         registeredUser.orgKey = organizationKey
+        registeredUser.isActive = True
         registeredUser.key = ndb.Key(RegisteredUsers, user_id)
-           
         registeredUser.put()
+        
+        globalOrganization.orgKey = organizationKey
+        globalOrganization.put()
         return 
     
     """SchoolManagementAPI v0.1"""
@@ -81,6 +95,10 @@ class SchoolManagementAPI(remote.Service):
                 'User already registered')
         else :
             registeredUser = RegisteredUsers()
+        globalOrganization = GlobalOrganization()
+        orgCount = GlobalOrganization.query().count()
+                
+        globalOrganization.organizationNamespace = orgCount + 888
         organization = Organization()
         if request:
             for field in ('orgName', 'phoneNumber'):
@@ -89,18 +107,13 @@ class SchoolManagementAPI(remote.Service):
                     if val:
                         setattr(organization, field, str(val))
         
-        uniqueOrganizationName = str(request.orgName).upper()
-        for i in range(1000):
-            if Organization.query(Organization.uniqueOrganizationName == uniqueOrganizationName).fetch():
-                uniqueOrganizationName = uniqueOrganizationName + str(i)
-            else:
-                break
-        organization.uniqueOrganizationName = uniqueOrganizationName   
+        organization.uniqueOrganizationName = globalOrganization.organizationNamespace
         organization.userID = user_id
         organization.emailID = user.email() 
+        organization.key = ndb.Key(Organization, globalOrganization.organizationNamespace)
         registeredUser.mainEmail = user.email() 
         registeredUser.userName = user.nickname()
-        self._saveOrganization(organization, registeredUser, user_id)
+        self._saveOrganization(organization, registeredUser, globalOrganization, user_id)
         
         return message_types.VoidMessage()
     
@@ -275,6 +288,7 @@ class SchoolManagementAPI(remote.Service):
                         setattr(employee, field, str(val)) 
         employee.orgKey = registeredUser.orgKey
         employee.createdBy = registeredUser.key
+        employee.key = ndb.Key(Employee, organization.employeeCount)
         kind = []
         kind.append(employee)
         kind.append(organization)
@@ -298,7 +312,8 @@ class SchoolManagementAPI(remote.Service):
         else:
             student = Student()
             organization.studentCount = organization.studentCount + 1
-            setattr(student, 'serialNumber', organization.studentCount)  
+            setattr(student, 'serialNumber', organization.studentCount)
+            setattr(student, 'key', ndb.Key(Student, organization.studentCount)) 
         if request:
             if request.studentName:
                 setattr(student, 'studentName', str(request.studentName))        
@@ -318,10 +333,16 @@ class SchoolManagementAPI(remote.Service):
                         student.subjectKey.append(ndb.Key(urlsafe=subjectWebSafeKey))                    
         setattr(student, 'createdBy', registeredUser.key)
         setattr(student, 'createdOn', datetime.datetime.now())
+        
         kind = []
         kind.append(student)
         kind.append(organization)
         self._saveKinds(kind)
+        d = self._create_document()
+        d.studentAge = student.studentAge
+        d.studentName = student.studentAge
+        index = search.Index('student')
+        index.put(d)
         return message_types.VoidMessage()
 
     def _copyStudentsToForm(self, student):
@@ -397,51 +418,39 @@ class SchoolManagementAPI(remote.Service):
             registeredUsersOutputForm.isPrincipal = True if registeredUser.isPrincipal else False
             registeredUsersOutputForm.isAdmin = True if registeredUser.isAdmin else False
             registeredUsersOutputForm.isStudent = True if registeredUser.isStudent else False
-            registeredUsersOutputForm.isUser = True
+            registeredUsersOutputForm.isActive = True if registeredUser.isActive else False
         return registeredUsersOutputForm
-    @endpoints.method(RegisteredUsersInputForm, RegisteredUsersOutputForm,
-            path='configureUser', http_method='POST', name='configureUser')      
-    def configureUser(self, request):
+    @endpoints.method(SelfRegistration_InputForm, message_types.VoidMessage,
+            path='selfRegistration', http_method='POST', name='selfRegistration')      
+    def selfRegistration(self, request):
         user = endpoints.get_current_user()
         user_id = helper.getUserId()
         registeredUser = helper.getRegisteredUser()
-        registeredUsersOutputForm = RegisteredUsersOutputForm()
         token = Token()
-#         namespace_manager.set_namespace(self._getNamespace(registeredUser))
-        
         if not registeredUser:
             registeredUser = RegisteredUsers()
             if request.orgKey:
-                registeredUser.orgKey = ndb.Key(urlsafe=request.orgKey)
+                registeredUser.orgKey = ndb.Key(Organization, request.orgKey)
             else:
                 raise endpoints.NotFoundException(
                 'Please give Organization key')
         else:
             raise endpoints.InternalServerErrorException("User Already Registered")
-        if request.isStudent == True:
-            if request.studentKey:
-                registeredUser.studentKey = ndb.Key(urlsafe=request.studentKey)
-                token.tokenNumber = random.randint(10000, 99999)
-                token.studentKey = registeredUser.studentKey
-            else:
-                raise endpoints.NotFoundException(
-               'Please give student key')
-        else:
-            if request.isEmployee == True:
-                if request.employeeKey:
-                    registeredUser.employeeKey = ndb.Key(urlsafe=request.employeeKey)
-                    token.tokenNumber = random.randint(10000, 99999)
-                    token.employeeKey = registeredUser.employeeKey
-                else:
-                    raise endpoints.NotFoundException(
-                    'Please give employee key')
+        if request.studentKey:
+            registeredUser.studentKey = ndb.Key(Student, request.studentKey)
+            token.tokenNumber = random.randint(10000, 99999)
+            token.studentKey = registeredUser.studentKey
+        elif request.empKey:
+            registeredUser.employeeKey = ndb.Key(Employee, request.empKey)
+            token.tokenNumber = random.randint(10000, 99999)
+            token.employeeKey = registeredUser.employeeKey
         registeredUser.key = ndb.Key(RegisteredUsers, user_id)
         print registeredUser
         registeredUser.put()
         token.put()
-        return registeredUsersOutputForm
+        return message_types.VoidMessage()
         
-    
+  
     @endpoints.method(approveUser_InputForm, message_types.VoidMessage,
             path='approveUser', http_method='POST', name='approveUser')
     def approveUser(self, request):
@@ -453,19 +462,100 @@ class SchoolManagementAPI(remote.Service):
         if not (registeredUser.isAdmin == True or registeredUser.isOwner == True):
             raise endpoints.ForbiddenException("Not Allowed to update user")
 #         tokenFromDatabase = Token.query(ndb.GenericProperty(str(Token.employeeKey)) == str(request.registeredUserKey)).fetch(projection=["tokenNumber"])
-        tokenFromDatabase = Token.query(Token.employeeKey == ndb.Key(urlsafe=request.registeredUserKey)).fetch(projection=["tokenNumber"])
-        print tokenFromDatabase[0].tokenNumber
-        if tokenFromDatabase[0].tokenNumber == request.tokenNumber:
-            regiteredUserToApprove = RegisteredUsers.query(RegisteredUsers.orgKey == registeredUser.orgKey and RegisteredUsers.employeeKey == ndb.Key(urlsafe=request.registeredUserKey)).fetch()
-            print regiteredUserToApprove[0]
-            regiteredUserToApprove[0].isActive = True
-            regiteredUserToApprove[0].put()
+        tokenFromDatabaseQuery = Token.query()
+        print tokenFromDatabaseQuery
+        if request.empId:
+            regiteredUserToApprove = RegisteredUsers.query(RegisteredUsers.orgKey == registeredUser.orgKey and RegisteredUsers.employeeKey == ndb.Key(Employee, request.empId)).fetch()
+            tokenFromDatabase = tokenFromDatabaseQuery.filter(Token.employeeKey == ndb.Key(Employee, request.empId)).fetch(projection=["tokenNumber"])
+            if not tokenFromDatabase:
+                raise endpoints.BadRequestException("Not a valid tEnployee ID")
+        elif request.studentId:
+            regiteredUserToApprove = RegisteredUsers.query(RegisteredUsers.orgKey == registeredUser.orgKey and RegisteredUsers.studentKey == ndb.Key(Student, request.studentId)).fetch()
+            tokenFromDatabase = tokenFromDatabaseQuery.filter(Token.studentKey == ndb.Key(Student, request.studentId)).fetch(projection=["tokenNumber"])
+            if not tokenFromDatabase:
+                raise endpoints.BadRequestException("Not a valid tEnployee ID")
+        regiteredUserToApprove = regiteredUserToApprove[0]
+        tokenFromDatabase = tokenFromDatabase[0]
+        if tokenFromDatabase.tokenNumber == request.tokenNumber:
+            print 
+            regiteredUserToApprove.isActive = True
+            regiteredUserToApprove.put()
+            tokenFromDatabaseQuery.fetch()[0].key.delete()
         else:
             raise endpoints.BadRequestException("Not a valid token Number")
             
     
         return message_types.VoidMessage()
         
+    @endpoints.method(giveRolesToUser_InputForm, message_types.VoidMessage,
+            path='giveRolesToUser', http_method='POST', name='giveRolesToUser')
+    def giveRolesToUser(self, request):
+        user = endpoints.get_current_user()
+        user_id = helper.getUserId()
+        registeredUser = helper.getRegisteredUser()
+        if not registeredUser:
+            raise endpoints.ForbiddenException("Not Allowed to update user")
+        if not (registeredUser.isAdmin == True or registeredUser.isOwner == True):
+            raise endpoints.ForbiddenException("Not Allowed to update user")
+        userToUpdate = RegisteredUsers.query(RegisteredUsers.key == ndb.Key(urlsafe=request.registeredUserKey)).fetch()
+        if not userToUpdate:
+            raise endpoints.ForbiddenException("Enter Correct Key")
+        userToUpdate = userToUpdate[0]
+        userToUpdate.isAdmin = True if request.isAdmin == True else False
+        userToUpdate.isTeacher = True if request.isTeacher == True else False
+        userToUpdate.isStudent = True if request.isStudent == True else False
+        userToUpdate.isPrincipal = True if request.isPrincipal == True else False
+        userToUpdate.put()
         
+    @endpoints.method(giveAttendenceToStudent_InputForm, message_types.VoidMessage,
+            path='giveAttendenceToStudent', http_method='POST', name='giveAttendenceToStudent')
+    def giveAttendenceToStudent(self, request):
+        user = endpoints.get_current_user()
+        user_id = helper.getUserId()
+        registeredUser = helper.getRegisteredUser()
+        if not registeredUser:
+            raise endpoints.ForbiddenException("Not Allowed to update user")
+        if not (registeredUser.isAdmin == True or registeredUser.isOwner == True or registeredUser.isTeacher == True):
+            raise endpoints.ForbiddenException("Not Allowed to update user")
+        namespace_manager.set_namespace(self._getNamespace(registeredUser))
+        print request.studentWebSafeKey
+        studentAttendenceKey = ndb.Key(StudentAttendence, request.date, parent=ndb.Key(urlsafe=request.studentWebSafeKey))
+        print studentAttendenceKey
+        studentAttendence = studentAttendenceKey.get()
+        print studentAttendence
+        if not studentAttendence:
+            studentAttendence = StudentAttendence()
+        print studentAttendence
+        studentAttendence.isPresent = True if request.isPresent == True else False
+        studentAttendence.date = datetime.datetime.strptime(request.date, '%d-%m-%Y').date()
+        studentAttendence.employeeKey = registeredUser.key
+        studentAttendence.key = studentAttendenceKey
+        studentAttendence.studentKey = ndb.Key(urlsafe=request.studentWebSafeKey)
+#         student = ndb.Key(urlsafe=request.studentWebSafeKey).get()
+#         attendencePercentage = StudentAttendence.all()
+#         attendencePercentage = attendencePercentage.ancestor(ndb.Key(urlsafe=request.studentWebSafeKey))
+        studentAttendence1 = StudentAttendence.query(ancestor=ndb.Key(urlsafe=request.studentWebSafeKey))
+        totalAttendence = 0.0
+        totalPresent = 0.0
+        for s in studentAttendence1:
+            totalAttendence = totalAttendence + 1
+            print s.isPresent 
+            if s.isPresent == True:
+                totalPresent = totalPresent + 1
+        print totalAttendence
+        print totalPresent
+        attendencePercentage = (totalPresent / totalAttendence) * 100
+        student = ndb.Key(urlsafe=request.studentWebSafeKey).get()
+        student.attendencePercentage = attendencePercentage
+        kind = []
+        kind.append(student)
+        kind.append(studentAttendence)
+        self._saveKinds(kind)
+        print datetime.date.today()
+        print studentAttendence
+        return message_types.VoidMessage()
+        
+
+
         
 api = endpoints.api_server([SchoolManagementAPI]) 
