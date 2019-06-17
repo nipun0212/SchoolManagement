@@ -1,0 +1,78 @@
+<!-- <div class="example-container">
+    <mat-form-field>
+      <input matInput placeholder="Input">
+    </mat-form-field>
+  
+    <mat-form-field>
+      <textarea matInput placeholder="Textarea"></textarea>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-select placeholder="Select">
+        <mat-option value="option">Option</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+   -->
+  
+   <!-- <mat-sidenav-container>
+      <mat-sidenav mode="side" opened="true">
+            <mat-nav-list>
+      <mat-list-item routerLink="contact" routerLinkActive="active">Contact </mat-list-item>
+      <mat-list-item  *ngIf="adminGuard.isActive()" routerLink="crisis"  routerLinkActive="active"> Salt </mat-list-item>
+      <mat-list-item *ngIf="adminGuard.isAdmin()" routerLink="crisis"  routerLinkActive="active"> Paprika </mat-list-item>
+            </mat-nav-list>
+    </mat-sidenav>
+  
+    <div class="my-content">
+        <app-title [subtitle] = "subtitle"> </app-title>
+
+        <router-outlet></router-outlet>
+</div>
+</mat-sidenav-container> -->
+<!-- <form class="example-container">
+  <mat-form-field>
+    <mat-select placeholder="Select Grade" [(ngModel)]="name" name = "name">
+      <mat-option *ngFor="let g of grades" [value]="g">{{ g }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput name = "orgSpecificName" [(ngModel)]="orgSpecificName">
+  </mat-form-field>
+  
+  <button (click)="onClick()">ndejkdnqjdn</button>
+  
+  </form> -->
+
+
+
+<mat-grid-list cols="2" rowHeight="2:1">
+  <mat-grid-tile><form class="example-form">
+    <mat-form-field class="example-full-width">
+      <mat-select placeholder="Select Grade" [(ngModel)]="name" name = "name">
+        <mat-option *ngFor="let g of grades" [value]="g">{{ g }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="example-full-width"> 
+      <input matInput name = "orgSpecificName" [(ngModel)]="orgSpecificName">
+    </mat-form-field>
+    
+    <button (click)="onClick()">ndejkdnqjdn</button>
+    
+    </form></mat-grid-tile>
+  <mat-grid-tile>2</mat-grid-tile>
+  <mat-grid-tile>3</mat-grid-tile>
+  <mat-grid-tile><form class="example-form">
+    <mat-form-field>
+      <mat-select placeholder="Select Grade" [(ngModel)]="name" name = "name">
+        <mat-option *ngFor="let g of grades" [value]="g">{{ g }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput name = "orgSpecificName" [(ngModel)]="orgSpecificName">
+    </mat-form-field>
+    
+    <button (click)="onClick()">ndejkdnqjdn</button>
+    
+    </form></mat-grid-tile>
+</mat-grid-list>

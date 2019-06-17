@@ -1,0 +1,26 @@
+
+<mat-sidenav-container>
+        <mat-sidenav mode="side" opened="true">
+                <mat-toolbar>
+                        <mat-toolbar-row>
+                                <a routerLink = "/heroes" routerLinkActive="active"> Heroes</a>
+                              </mat-toolbar-row>
+                            
+                      
+                        <mat-toolbar-row>
+                                <a routerLink ="/dashboard" routerLinkActive="active"> Dashboard </a>
+                        </mat-toolbar-row>
+                      
+                        <mat-toolbar-row>
+                                <a routerLink = "/heroes" routerLinkActive="active"> Heroes</a>
+                              </mat-toolbar-row>
+                      </mat-toolbar>
+            </mat-sidenav>
+        <div class="my-content">
+                <app-title [subtitle] = "subtitle"> </app-title>
+
+                <app-contact></app-contact> 
+                <router-outlet></router-outlet>
+        </div>
+      </mat-sidenav-container>
+

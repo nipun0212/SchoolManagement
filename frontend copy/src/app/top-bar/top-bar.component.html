@@ -1,0 +1,16 @@
+<md-sidenav-container>
+        <md-sidenav mode="side" opened="true">
+            <a routerLink = "/heroes" routerLinkActive="active"> Heroes</a>
+            <a routerLink ="/dashboard" routerLinkActive="active" *ngIf = "dashboard"> Dashboard </a>       
+        </md-sidenav>
+        <div class="my-content">
+            <h1>
+                {{title}}
+              </h1>
+              <h2>
+                My favorite hero is {{myHero}}
+              </h2>
+              <router-outlet></router-outlet>
+        </div>
+      </md-sidenav-container>
+  

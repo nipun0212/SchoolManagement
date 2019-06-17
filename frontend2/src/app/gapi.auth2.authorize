@@ -1,0 +1,34 @@
+gapi.auth2.authorize
+
+
+gapi.auth2.init({
+  'client_id' : "557214639444-0rsmirikvhjt90hfonql1abcv38qevag.apps.googleusercontent.com",
+  'scope':"openid profile email",
+
+}).then(e=>{
+  console.log("nipun");
+  console.log(e);
+})
+
+
+gapi.auth2.authorize({
+  'prompt':"consent"
+
+}).then(e=>{
+  console.log("nipun");
+  console.log(e);
+})
+
+gapi.auth2.init({
+  'client_id' : "557214639444-0rsmirikvhjt90hfonql1abcv38qevag.apps.googleusercontent.com",
+  'scope':"openid profile email",
+
+}).then(e=>e.signIn)
+
+
+
+gapi.auth2.getAuthInstance().signIn().then(()=>console.log('nipun'))
+
+acbc32ccc739
+
+DL_5911A4217BCF849E3400000E@exchange.sap.corp,cc:danigaivelan.n@sap.com,cc:sudeep.kumar.das@sap.com,cc:mitesh.shah@sap.com

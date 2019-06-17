@@ -1,0 +1,38 @@
+<md-nav-list>
+  <md-list-item>
+    <p> Add Students </p>
+    <p>Add Teachers</p>
+  </md-list-item>
+</md-nav-list>
+
+
+<main>
+  <router-outlet role="main"></router-outlet>
+</main>
+
+<md-sidenav-layout [class.m2app-dark]="isDarkTheme">
+  
+      <md-sidenav #start (open)="closeSideNavStartButton.focus()">
+        Side nav bar
+        <br>
+        <button md-button #closeSideNavStartButton (click)="start.close()" color="primary">Close</button>
+      </md-sidenav>
+      
+  
+  <md-card>
+  <md-toolbar color="primary"> Angular 2 Material Input Divider Colors</md-toolbar>
+  <md-card-content>
+  <h4>Input Example</h4>
+  <md-input dividerColor="primary" placeholder="Default Color" value="materia2"></md-input>
+  <md-input dividerColor="accent" placeholder="Accent Color" value="anguar2"></md-input>
+  <md-input dividerColor="warn" placeholder="Warn Color" value="design"></md-input>
+   
+  <h4>Textarea Example</h4>
+  <md-textarea dividerColor="primary" placeholder="Default Color" value="materia2"></md-textarea>
+  <md-textarea dividerColor="accent" placeholder="Accent Color" value="anguar2"></md-textarea>
+  <md-textarea dividerColor="warn" placeholder="Warn Color" value="design"></md-textarea>
+   
+  </md-card-content>
+  </md-card>
+  
+  </md-sidenav-layout>

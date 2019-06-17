@@ -1,0 +1,66 @@
+<!-- <app-title [subtitle] = "subtitle"> </app-title>
+<nav>
+    <a routerLink="contact" routerLinkActive="active">Contact</a>
+    <a routerLink="crisis"  routerLinkActive="active">Crisis Center</a>
+    <a routerLink="heroes"  routerLinkActive="active">Heroes</a>
+  </nav>
+<router-outlet></router-outlet>
+<router-outlet name="popup"></router-outlet>
+ -->
+
+
+<!-- <mat-sidenav-container>
+        <mat-sidenav mode="side" opened="true">
+                <mat-toolbar>
+                        <mat-toolbar-row>
+                            <a routerLink="contact" routerLinkActive="active">Contact</a>
+                              </mat-toolbar-row>
+                        <mat-toolbar-row>
+                            <a  *ngIf="adminGuard.isAdmin()" routerLink="crisis"  routerLinkActive="active">Crisis Center</a>                        </mat-toolbar-row>
+                      
+                        <mat-toolbar-row>
+                            <a *ngIf="adminGuard.isAdmin()" routerLink="heroes" routerLinkActive="active">Heroes</a>
+                          </mat-toolbar-row>
+                          <mat-toolbar-row>
+                            <button (click) = "adminGuard.getUser()" >click me</button>
+                              </mat-toolbar-row>
+                      </mat-toolbar>
+            </mat-sidenav>
+        <div class="my-content">
+                <app-title [subtitle] = "subtitle"> </app-title>
+
+                <router-outlet></router-outlet>
+        </div>
+      </mat-sidenav-container>
+
+      -->
+
+      <mat-sidenav-container>
+          <mat-sidenav mode="side" opened="true">
+                <mat-nav-list>
+          <mat-list-item routerLink="contact" routerLinkActive="active"> Contact </mat-list-item>
+          <mat-list-item  *ngIf="adminGuard.isActive()" routerLink="crisis"  routerLinkActive="active"> Salt </mat-list-item>
+          <mat-list-item *ngIf="adminGuard.isAdmin()" routerLink="heroes" routerLinkActive="active"> Paprika </mat-list-item>
+          <mat-list-item *ngIf="adminGuard.isAdmin()" routerLink="heroes" routerLinkActive="active"> 
+              
+                <mat-menu #appMenu="matMenu">
+                        <button mat-menu-item> Settings </button>
+                        <button mat-menu-item> Help </button>
+                      </mat-menu>
+                      
+                      <button mat-icon-button [matMenuTriggerFor]="appMenu">
+                         <mat-icon>more_vert</mat-icon>
+                      </button>
+        
+        </mat-list-item>  
+        </mat-nav-list>
+               
+        </mat-sidenav>
+      
+        <!-- <div class="my-content"> -->
+            <app-title [subtitle] = "subtitle"> </app-title>
+
+            <router-outlet></router-outlet>
+    <!-- </div> -->
+  </mat-sidenav-container>
+  

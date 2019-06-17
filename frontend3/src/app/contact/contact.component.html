@@ -1,0 +1,29 @@
+<ol>
+    <li>
+      <mat-form-field>
+        <input matInput [(ngModel)]="name" placeholder="What's your name?">
+      </mat-form-field>
+    </li>
+    <li>
+      <button mat-raised-button (click)="openDialog()">Pick one</button>
+    </li>
+    <li *ngIf="animal">
+      You chose: <i>{{animal}}</i>
+    </li>
+  </ol>
+   <!-- <mat-sidenav-container>
+      <mat-sidenav mode="side" opened="true">
+            <mat-nav-list>
+      <mat-list-item routerLink="contact" routerLinkActive="active">Contact </mat-list-item>
+      <mat-list-item  *ngIf="adminGuard.isActive()" routerLink="crisis"  routerLinkActive="active"> Salt </mat-list-item>
+      <mat-list-item *ngIf="adminGuard.isAdmin()" routerLink="crisis"  routerLinkActive="active"> Paprika </mat-list-item>
+            </mat-nav-list>
+    </mat-sidenav>
+  
+    <div class="my-content">
+        <app-title [subtitle] = "subtitle"> </app-title>
+
+        <router-outlet></router-outlet>
+</div>
+</mat-sidenav-container> -->
+  
